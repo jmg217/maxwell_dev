@@ -7,53 +7,31 @@ class PayOff
 {
 public:
 	PayOff(){};
-	virtual double operator()(double Spot) const=0;
+	virtual double operator()(const std::vector<std::vector< std::vector<double> > >& X, std::vector<double>& asset_amount, int i, int j) const=0;
 	virtual ~PayOff(){}
 private:
 };
 
 
-class MeshPayOffCall : public PayOff
+class GeometricPayOffCall : public PayOff
 {
 public:
-	MeshPayOffCall(double k);
+	GeometricPayOffCall(double k);
 	virtual double operator()(const std::vector<std::vector< std::vector<double> > >& X, std::vector<double>& asset_amount, int i, int j) const;
-	virtual ~MeshPayOffCall(){}
+	virtual ~GeometricPayOffCall(){}
 private:
 	double Strike;
 };
 
 
-class MeshPayOffPut : public PayOff
+class GeometricPayOffPut : public PayOff
 {
 public:
-	MeshPayOffPut(double k);
+	GeometricPayOffPut(double k);
 	virtual double operator()(const std::vector<std::vector< std::vector<double> > >& X, std::vector<double>& asset_amount, int i, int j) const;
 	
-	virtual ~MeshPayOffPut(){}
+	virtual ~GeometricPayOffPut(){}
 private:
 	double Strike;
 };
-
-class PathPayOffCall : public PayOff
-{
-public:
-        PathPayOffCall(double k);
-        virtual double operator()(const std::vector<std::vector<double> >& S, std::vector<double>& asset_amount, int i) const;
-        virtual ~PathPayOffCall(){}
-private:
-        double Strike;
-};
-
-
-class PathPayOffPut : public PayOff
-{
-public:
-        PathPayOffPut(double k);
-        virtual double operator()(const std::vector<std::vector<double> >& S, std::vector<double>& asset_amount, int i) const;
-        virtual ~PathPayOffPut(){}
-private:
-        double Strike;
-};
-
 #endif

@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <random>
+#include "Payoff.h"
 
 #define PI 3.14159265358979323846
 
@@ -181,8 +182,8 @@ for(integer=0; integer<asset_amount.size(); integer++){
 //// DECLARE AN INSTANCE OF THE PAYOFF////
 //////////////////////////////////////////
 
-MeshPayOffCall meshcallpayoff(strike);
-PathPayOffCall pathcallpayoff(strike); 
+GeometricPayOffCall callpayoff(strike);
+ 
 
 
 //Mesh matrix
@@ -376,7 +377,7 @@ for(int q=1; q<m; q++){
 	}
 }
 
-V_0=MeshEstimator(strike, r, delta_t, b, m, X, W, V, asset_amount, meshcallpayoff);//high bias option price
+V_0=MeshEstimator(strike, r, delta_t, b, m, X, W, V, asset_amount, callpayoff);//high bias option price
 Vvector.push_back(V_0);//vector containing high bias option prices
 Vtotal_sum+=V_0;
 
@@ -385,7 +386,7 @@ std::cout<<"High Bias price (V_0) for mesh iteration "<<iterator<<" is "<<V_0<<s
 //average over path estimators
 v_sum=0;
 for(int f=0; f<Path_estimator_iterations; f++){
-v_sum+=PathEstimator(strike, r, delta_t, b,  m, sigma, delta, X0, X, W, V, asset_amount, pathcallpayoff);
+v_sum+=PathEstimator(strike, r, delta_t, b,  m, sigma, delta, X0, X, W, V, asset_amount, callpayoff);
 }
 
 v_0=(1/double(Path_estimator_iterations))*v_sum;

@@ -6,7 +6,7 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
-
+#include "Payoff.h"
 //this function returns the payoff value
 double payoff(std::vector<std::vector< std::vector<double> > >& X, double k, std::vector<double>& asset_amount, int i, int j){
 double h;

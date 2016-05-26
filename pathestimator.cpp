@@ -12,15 +12,16 @@ double density(double Xold, double  Xnew, double sigma, double r, double delta, 
 //declare the box muller function. This is contained in meshgen.cpp
 double boxmuller();
 //this returns the payoff value
-double Payoff(std::vector<std::vector<double> >& S, double k, std::vector<double>& asset_amount, int i){
+
+/*double Payoff(std::vector<std::vector<double> >& S, double k, std::vector<double>& asset_amount, int i){
 double h;
 //h=k-x;
 //h=0;
 h=1;
-/*
-for(int l=0; l<asset_amount.size(); l++){
-	h+=asset_amount[l]*exp(S[i][l]);
-}*/
+
+//for(int l=0; l<asset_amount.size(); l++){
+//	h+=asset_amount[l]*exp(S[i][l]);
+//}
 for(int l=0; l<asset_amount.size(); l++){
          h*=exp(S[i][l]);
 }
@@ -33,7 +34,7 @@ h=h-k;
 
 return h;
 }
-
+*/
 
 //This function returns a low bias price of an option.
 double PathEstimator(double strike, double r, double delta_t, int b, double m, std::vector<double>& sigma, std::vector<double>& delta, std::vector<double>& X0, std::vector<std::vector< std::vector<double> > >& X , std::vector< std::vector< std::vector<double> > >& W, std::vector< std::vector<double> >& V, std::vector<double>& asset_amount, const PayOff& thePayOff){
@@ -47,17 +48,21 @@ std::normal_distribution<double> distribution(0.0,1.0);
 
 
 //Simulated path for sub optimal stoppage
-std::vector<std::vector<double > > S;
+std::vector< std::vector< std::vector< double > > > S;
 //temp vector of S weights
-std::vector<double > tempvec;
+std::vector< double > tempvec;
 //weights matrix for S
 std::vector< std::vector<double> > S_Weights; 
 //temp vector in simulated path loop
-std::vector<double> nodevector;
+std::vector< std::vector< double > > nodevector;
+
+std::vector<double> tempnodevector;
+
 
 //simulated path loop
 for(int i=0; i<m; i++){
 nodevector.clear();
+tempnodevector.clear();
 //std::cout<<"i="<<i<<std::endl;
 	if(i==0){
 		for(int ll=0; ll<asset_amount.size(); ll++){
@@ -66,7 +71,7 @@ nodevector.clear();
 		//	std::cout<<Z<<std::endl;
 			//S_i=X0[ll] * (exp((r-delta[ll]-0.5*sigma[ll]*sigma[ll])*delta_t + sigma[ll]*sqrt(delta_t)*Z));//the second value in the simulated path
 			S_i=X0[ll] +  (r-delta[ll]-0.5*pow(sigma[ll], 2))*delta_t + sigma[ll]*sqrt(delta_t)*Z;
-			nodevector.push_back(S_i);
+			tempnodevector.push_back(S_i);
 		}
 	}
 
@@ -75,11 +80,11 @@ nodevector.clear();
 			//Z=boxmuller();
 			Z=distribution(generator);
 			//S_i=S[i-1][jj]*(exp((r-delta[jj]-0.5*sigma[jj]*sigma[jj])*delta_t + sigma[jj]*sqrt(delta_t)*Z));//the simulate path values
-			S_i=S[i-1][jj] +  (r-delta[jj]-0.5*pow(sigma[jj], 2))*delta_t + sigma[jj]*sqrt(delta_t)*Z;
-			nodevector.push_back(S_i);
+			S_i=S[i-1][0][jj] +  (r-delta[jj]-0.5*pow(sigma[jj], 2))*delta_t + sigma[jj]*sqrt(delta_t)*Z;
+			tempnodevector.push_back(S_i);
 		}
 	}
-
+nodevector.push_back(tempnodevector);
 S.push_back(nodevector);//simulated path is stored in this vector 
 }
 
@@ -93,7 +98,7 @@ tempvec.clear();
 	sum=0;
 	w_s=1;
 		for(int kk=0; kk<asset_amount.size(); kk++){
-		w_s*=density(S[t][kk], X[t+1][h][kk], sigma[kk], r, delta[kk], delta_t);
+		w_s*=density(S[t][0][kk], X[t+1][h][kk], sigma[kk], r, delta[kk], delta_t);
 		}
 
 	density_product=1;
@@ -132,7 +137,7 @@ for(int i=0; i<m; i++){
 	
 
 //H=Payoff(S, strike, asset_amount, i)*exp(-r*delta_t*((i+1)));
-H=thePayOff(S, asset_amount,i)*exp(-r*delta_t*((i+1)));
+H=thePayOff(S, asset_amount, i, 0)*exp(-r*delta_t*((i+1)));
 //check if continuation value is greater then the immediate payoff
 	if(H>=C || i==m-1){
 	v_0=H; 
