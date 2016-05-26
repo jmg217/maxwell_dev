@@ -1,0 +1,27 @@
+The starting price (dollars)=
+100,100
+The time to expiry (years)=
+1
+The number of time intervals=
+10
+The risk free rate of interest=
+0.03
+The dividend yeild=
+0.05,0.05
+The volatility=
+0.4,0.4
+The number of times we iterated over the path estimator=
+500
+The strike price (dollars)=
+100
+The number of nodes per time step=
+500
+The number of times we run the programme=
+1
+1-alpha/2 quantile of the standard normal distribution N(0,1)=
+1.96
+Number of underlying assets=
+2
+Amounts of each asset=
+0.5,0.5
+
