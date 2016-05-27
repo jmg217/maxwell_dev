@@ -182,7 +182,7 @@ for(integer=0; integer<asset_amount.size(); integer++){
 //// DECLARE AN INSTANCE OF THE PAYOFF////
 //////////////////////////////////////////
 
-GeometricPayOffCall callpayoff(strike);
+GeometricPayOffPut callpayoff(strike);
  
 
 

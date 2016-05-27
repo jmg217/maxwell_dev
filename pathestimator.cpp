@@ -36,6 +36,41 @@ return h;
 }
 */
 
+void S_weights(std::vector< double >& tempvec, std::vector< std::vector< double > >& S_Weights, std::vector<std::vector< std::vector< double> > >& X, std::vector<std::vector< std::vector< double> > >& S, double m, int b, std::vector<double>& sigma, std::vector<double>& delta, double delta_t, std::vector<double>& asset_amount, double r , int i ){
+
+double density_product, sum, w_s;
+
+//this for-loop generates the S weights 
+
+//std::cout<<"t="<<t<<std::endl;
+tempvec.clear();
+	for(int h=0; h<b; h++){   //h=k
+	sum=0;
+	w_s=1;
+		for(int kk=0; kk<asset_amount.size(); kk++){
+		w_s*=density(S[i][0][kk], X[i+1][h][kk], sigma[kk], r, delta[kk], delta_t);
+		}
+
+	density_product=1;
+	
+		for(int g=0; g<b; g++){   //g=l
+			for(int gg=0; gg<asset_amount.size(); gg++){
+			density_product*=density(X[i][g][gg], X[i+1][h][gg], sigma[gg], r, delta[gg], delta_t);
+			}
+		sum+=(1/((double)b))*density_product;
+		}
+	w_s=w_s/sum;	
+	tempvec.push_back(w_s);
+	}
+
+S_Weights.push_back(tempvec); //vector storing S weights
+
+
+}
+
+
+
+
 //This function returns a low bias price of an option.
 double PathEstimator(double strike, double r, double delta_t, int b, double m, std::vector<double>& sigma, std::vector<double>& delta, std::vector<double>& X0, std::vector<std::vector< std::vector<double> > >& X , std::vector< std::vector< std::vector<double> > >& W, std::vector< std::vector<double> >& V, std::vector<double>& asset_amount, const PayOff& thePayOff){
 
@@ -58,9 +93,10 @@ std::vector< std::vector< double > > nodevector;
 
 std::vector<double> tempnodevector;
 
-
+int i=0;
 //simulated path loop
-for(int i=0; i<m; i++){
+//for(int i=0; i<m; i++){
+do {
 nodevector.clear();
 tempnodevector.clear();
 //std::cout<<"i="<<i<<std::endl;
@@ -86,8 +122,11 @@ tempnodevector.clear();
 	}
 nodevector.push_back(tempnodevector);
 S.push_back(nodevector);//simulated path is stored in this vector 
+//}end of simulated path loop
+if(i<m-1){
+S_weights(tempvec, S_Weights, X, S, m, b, sigma, delta, delta_t, asset_amount, r, i  );
 }
-
+/*
 double density_product;
 
 //this for-loop generates the S weights 
@@ -115,10 +154,10 @@ tempvec.clear();
 
 S_Weights.push_back(tempvec); //vector storing S weights
 }
-
+*/
 double con_val; //continuation value variable
 //sub optimal path loop
-for(int i=0; i<m; i++){
+//for(int i=0; i<m; i++){
 	sum=0;
 	if(i==m-1){
 	C=0;//continuation value at the last time step
@@ -139,12 +178,15 @@ for(int i=0; i<m; i++){
 //H=Payoff(S, strike, asset_amount, i)*exp(-r*delta_t*((i+1)));
 H=thePayOff(S, asset_amount, i, 0)*exp(-r*delta_t*((i+1)));
 //check if continuation value is greater then the immediate payoff
-	if(H>=C || i==m-1){
+/*	if(H>=C || i==m-1){
 	v_0=H; 
 	break;
-	}
+	}*/
 
-}
+i=i+1;
+}while(H<C);
+
+v_0=H;
 
 return v_0;
 
