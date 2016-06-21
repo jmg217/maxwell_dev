@@ -11,6 +11,8 @@
 double density(double Xold, double  Xnew, double sigma, double r, double delta, double delta_t);
 //declare the box muller function. This is contained in meshgen.cpp
 double boxmuller();
+
+double inner_product(int N, std::vector<double>& first_vector, std::vector<double>& second_vector);
 //this returns the payoff value
 
 /*double Payoff(std::vector<std::vector<double> >& S, double k, std::vector<double>& asset_amount, int i){
@@ -155,23 +157,33 @@ tempvec.clear();
 S_Weights.push_back(tempvec); //vector storing S weights
 }
 */
-double con_val; //continuation value variable
+double con_val=0; //continuation value variable
 //sub optimal path loop
 //for(int i=0; i<m; i++){
 	sum=0;
+
+std::vector<double> first_vector;
+std::vector<double> second_vector;
+
 	if(i==m-1){
 	C=0;//continuation value at the last time step
 	}
 	
 	else{
 		for(int k=0; k<b; k++){	
-
-			weight=S_Weights[i][k];
+			first_vector.push_back(S_Weights[i][k]);
+                        second_vector.push_back(V[(m-1)-i-1][k]);
+			/*weight=S_Weights[i][k];
 			con_val=V[(m-1)-i-1][k];
 		
-			sum+=weight*con_val;			
+			sum+=weight*con_val;*/  			
 		}
-	C=(1/(double)b)*sum; //continuation value
+	
+        con_val=inner_product(b, first_vector, second_vector);
+	
+    
+       // C=(1/(double)b)*sum; //continuation value
+	C=(1/(double)b)*con_val;
 	}	
 	
 

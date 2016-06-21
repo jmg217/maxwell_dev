@@ -45,13 +45,14 @@ double timeDotProduct(double (*kernel)(double*, double*, int), double *x, double
     std::cout << "Error: " << cudaGetErrorString(err) << std::endl;
   }
 
-  if( fabs(prod - ans) / fabs(ans) < 1e-4 )
+  if( fabs(prod - ans) / fabs(ans) > 1e-4 )
   {
-    std::cout << "Multiplication correct! " << prod << " = " << ans << std::endl;
+    std::cout << "Multiplication wrong! " << prod << " != " << ans << std::endl;
   }
   else
   {
-    std::cout << "Multiplication wrong! " << prod << " != " << ans << std::endl;
+std::cout << "Multiplication right " << prod << " = " << ans << std::endl;
+
   }
 
   float timeInMs;
@@ -65,7 +66,7 @@ double timeDotProduct(double (*kernel)(double*, double*, int), double *x, double
 
   CUDA_CHECK;
   
-  return 0;
+  return prod;
 }
 
 
@@ -117,16 +118,18 @@ double inner_product(int N, std::vector<double>& first_vector, std::vector<doubl
   //cudaMemcpy(y_host, y, N*sizeof(float), cudaMemcpyDeviceToHost);
 
   // Check result
-
+/*
   clock_t st = clock();
-  double prod = 0;
+  
+   double prod = 0;
   for(int i=0 ; i < N ; i++)
   {
     prod += y_host[i] * x_host[i];
   }
+  
   clock_t end = clock();
-
-  std::cout << "CPU time = " << (end - st) / (float)CLOCKS_PER_SEC * 1000 << " ms" << std::endl;
+*/
+//  std::cout << "CPU time = " << (end - st) / (float)CLOCKS_PER_SEC * 1000 << " ms" << std::endl;
 
 /*  std::cout << "Naive approach - wrong" << std::endl;
   timeDotProduct(calcDotProduct1, x, y, N, prod);
@@ -137,12 +140,14 @@ double inner_product(int N, std::vector<double>& first_vector, std::vector<doubl
   std::cout << "Repeated reduction" << std::endl;
   timeDotProduct(calcDotProduct3Reduce, x, y, N, prod);
  */ 
-  std::cout << "Thrust" << std::endl;
-  timeDotProduct(calcDotProductThrust, x, y, N, prod);
-
+  //std::cout << "Thrust" << std::endl;
+  //double dot = timeDotProduct(calcDotProductThrust, x, y, N, prod);
+  double dot = calcDotProductThrust(x, y, N);
   cudaFree(x);
   cudaFree(y);
 
   delete[] x_host;
   delete[] y_host;
+  
+  return dot;
 }
