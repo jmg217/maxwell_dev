@@ -7,6 +7,9 @@
 #include <vector>
 #include <sstream>
 #include "Payoff.h"
+
+double inner_control_mesh(int i, int j, int b, double r, double delta_t, double m, std::vector< std::vector< std::vector<double> > >& W, std::vector<std::vector< std::vector<double> > >& X, std::vector< std::vector<double> >& V);
+
 //this function returns the payoff value
 double payoff(std::vector<std::vector< std::vector<double> > >& X, double k, std::vector<double>& asset_amount, int i, int j){
 double h;
@@ -54,18 +57,25 @@ tempvec.clear();
 	
 		else{
 //continue to develope continuation vale			
-		sum=0;
+
+//NEW CONTROL VARIATE VERSION OF CONTIN VAL
+
+		C=inner_control_mesh(i, j, b, r, delta_t, m, W, X, V);
+
+
+////////////PREVIOUS CALCULATION of CONTIN VAL. 
+	/*	sum=0;
 			for(int k=0; k<b; k++){
 //std::cout<< sum<<std::endl;			
 			sum+=(W[(m-i)][k][j])*V[i-1][k]; //m-i when i=1 is 10-1=9.when i=9 m-i=1. we get V_0 separately by using W[0][k][j]	
-			/*if(m-i==2 && j == 50){
-			std::cout<<"k="<<k<<"\t"<<"weight="<<W[(m-i)][k][j]<<"\t"<<"V_i+1="<<V[i-1][k]<<std::endl;
-			}*/	
+				
 			}
 	
 		C=(1/((double)b))*sum; //continuation value
 			
-		
+	*/
+////////////END OF CALCULATION OF PREVIOUS CONTIN VAL. (WITHOUT CONTROL VARIATES)
+	
 		/*if(m-i==2 && j == 50){
 		std::cout<<"contin value="<< C<<std::endl; 
 		}*/
