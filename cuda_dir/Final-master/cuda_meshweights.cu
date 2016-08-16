@@ -33,7 +33,7 @@ return p;
 
 __device__ double* three_dim_indexW(double* matrix, int i, int j, int k, double m, int b, int num_assets){
 
-int m_int = (int)m;
+//int m_int = (int)m;
 double* p;
 
 //specify index layout here
@@ -122,7 +122,7 @@ weight_denominator_device[idx]=sum;
 
 
 __global__ void meshweightsKernel(double* W_device, double m, int b, double* sigma_device, double* delta_device, double r, double delta_t, double* X_device, int num_assets, double* weight_denominator_device, double* tempW_device){
-double wdenominator, w;
+double wdenominator;
 
 int idx =blockDim.x*blockIdx.x + threadIdx.x;
 int m_int=(int)m;
@@ -202,17 +202,71 @@ double* tempW_device;
 cudaMalloc((void**) &X_device, X_N*sizeof(double) );
 cudaMemcpy(X_device, X, X_N*sizeof(double), cudaMemcpyHostToDevice);
 
+cudaError_t error = cudaGetLastError();
+
+
+  if( error != cudaSuccess )
+  {
+    std::cout << cudaGetErrorString(error) << std::endl;
+    printf("found at line %d\n", __LINE__);
+    exit(1);
+  }
+
+
 cudaMalloc((void**) &W_device, W_N*sizeof(double) );
 cudaMemcpy(W_device, W, W_N*sizeof(double), cudaMemcpyHostToDevice);
 
+error = cudaGetLastError();
+
+
+  if( error != cudaSuccess )
+  {
+    std::cout << cudaGetErrorString(error) << std::endl;
+    printf("found at line %d\n", __LINE__);
+    exit(1);
+  }
+
+
 cudaMalloc((void**) &sigma_device, sigma_N*sizeof(double) );
-cudaMemcpy(sigma_device, sigma, sigma_N*sizeof(double), cudaMemcpyHostToDevice);
+cudaMemcpy(sigma_device, sigma_host, sigma_N*sizeof(double), cudaMemcpyHostToDevice);
+
+error = cudaGetLastError();
+
+
+  if( error != cudaSuccess )
+  {
+    std::cout << cudaGetErrorString(error) << std::endl;
+    printf("found at line %d\n", __LINE__);
+    exit(1);
+  }
+
 
 cudaMalloc((void**) &delta_device, delta_N*sizeof(double) );
-cudaMemcpy(delta_device, delta, delta_N*sizeof(double), cudaMemcpyHostToDevice);
+cudaMemcpy(delta_device, delta_host, delta_N*sizeof(double), cudaMemcpyHostToDevice);
+
+error = cudaGetLastError();
+
+
+  if( error != cudaSuccess )
+  {
+    std::cout << cudaGetErrorString(error) << std::endl;
+    printf("found at line %d\n", __LINE__);
+    exit(1);
+  }
+
 
 cudaMalloc((void**) &weight_denominator_device, w_N*sizeof(double) );
 cudaMemcpy(weight_denominator_device, weight_denominator, w_N*sizeof(double), cudaMemcpyHostToDevice);
+
+error = cudaGetLastError();
+
+
+  if( error != cudaSuccess )
+  {
+    std::cout << cudaGetErrorString(error) << std::endl;
+    printf("found at line %d\n", __LINE__);
+    exit(1);
+  }
 
 
 cudaMalloc((void**) &tempW_device, temp_N*sizeof(double) );
@@ -221,7 +275,7 @@ cudaMemcpy(tempW_device, tempW, temp_N*sizeof(double), cudaMemcpyHostToDevice);
 //dim3 gridDim((int)ceil(temp_N/512.0));
 //dim3 blockDim(512.0);
 
-cudaError_t error = cudaGetLastError();
+error = cudaGetLastError();
 
 
   if( error != cudaSuccess )

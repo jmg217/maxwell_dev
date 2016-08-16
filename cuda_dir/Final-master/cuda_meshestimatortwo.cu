@@ -30,7 +30,7 @@ return p;
 
 __device__ double* three_dim_indexME(double* matrix, int i, int j, int k, double m, int b, int num_assets){
 
-int m_int = (int)m;
+//int m_int = (int)m;
 double* p;
 
 //specify index layout here
@@ -262,7 +262,7 @@ cudaMalloc((void**) &X_device, X_N*sizeof(double) );
 cudaMemcpy(X_device, X, X_N*sizeof(double), cudaMemcpyHostToDevice);
 
 cudaMalloc((void**) &asset_amount_device, asset_amount_N*sizeof(double) );
-cudaMemcpy(asset_amount_device, asset_amount, asset_amount_N*sizeof(double), cudaMemcpyHostToDevice);
+cudaMemcpy(asset_amount_device, asset_amount_host, asset_amount_N*sizeof(double), cudaMemcpyHostToDevice);
 
 cudaMalloc((void**) &V_device, V_N*sizeof(double) );
 cudaMemcpy(V_device, V, V_N*sizeof(double), cudaMemcpyHostToDevice);

@@ -433,11 +433,21 @@ double pointEst=(V_0+v_0)/2;
 double EstimatedError=((Verror+V_0)-(v_0-verror))/(2*pointEst);
 clock_t end =clock();
 double elapsedtime=double(end-begin) / CLOCKS_PER_SEC;
+
 std::ofstream outFile("results.txt", std::ios_base::app | std::ios_base::out);
 
-outFile << N <<"\t"<< b <<"\t"<< Path_estimator_iterations<<"\t"<<X0[0]<<"\t" << v_0 <<"\t"<< standardErrorv <<"\t"<< V_0 <<"\t"<< standardErrorV <<"\t"<< v_0-verror<<"\t"<<Verror+V_0 <<"\t"<<pointEst<<"\t"<<EstimatedError<<"\t" <<elapsedtime<< std::endl;
+outFile << N <<"\t"<< b <<"\t"<< Path_estimator_iterations<<"\t"<<exp(X0[0])<<"\t" << v_0 <<"\t"<< standardErrorv <<"\t"<< V_0 <<"\t"<< standardErrorV <<"\t"<< v_0-verror<<"\t"<<Verror+V_0 <<"\t"<<pointEst<<"\t"<<EstimatedError<<"\t" <<elapsedtime<< std::endl;
 
 outFile.close();
+
+std::ofstream LoutFile("latexresults.txt", std::ios_base::app | std::ios_base::out);
+
+LoutFile <<std::fixed<<std::setprecision(3) << N <<"&"<< b <<"&"<< Path_estimator_iterations<<"&"<<exp(X0[0])<<"&" << v_0 <<"&"<< standardErrorv <<"&"<< V_0 <<"&"<< standardErrorV <<"&"<< v_0-verror<<"&"<<Verror+V_0 <<"&"<<pointEst<<"&"<<EstimatedError<<"&" <<elapsedtime<< std::endl;
+
+outFile.close();
+
+
+
 
 delete[] X;
 delete[] W;

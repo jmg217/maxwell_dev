@@ -28,7 +28,7 @@ return p;
 
 __device__ double* three_dim_indexGPUA(double* matrix, int i, int j, int k, double m, int b, int num_assets){
 
-int m_int = (int)m;
+//int m_int = (int)m;
 double* p;
 
 //specify index layout here
