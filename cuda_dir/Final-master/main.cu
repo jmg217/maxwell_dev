@@ -49,6 +49,8 @@ double PathEstimator(double strike, double r, double delta_t, int b, double m, s
 double PathEstimator(double strike, double r, double delta_t, int b, double m, double sigma[], double delta[], double X0[], double* X, double* weight_denominator, double* V, double asset_amount[], int num_assets, int Path_estimator_iterations, int iterator, int Final_iteration, curandState_t* States, curandState_t* states, int threads);
 
 void print_high_payoff(int b, double m, double* X, double* V, double asset_amount[], double* W );
+void SimulationPaths(int b, double m, double* X, double* V, double asset_amount[], double* W, double x );
+
 
 __global__ void initialise(unsigned int seed, curandState_t* states) {
 int idx=blockDim.x*blockIdx.x + threadIdx.x;
@@ -401,7 +403,12 @@ std::cout<<"Low Bias price (v_0) for mesh iteration "<<iterator<<" is "<<v_0<<st
 
 
 }//this is the end of the loop over the whole process.
+
+if(num_assets==1){
 print_high_payoff(b, m, X, V, asset_amount,W);
+SimulationPaths(b, m, X, V, asset_amount, W, X0[0] );
+}
+
 //Calculate V(N) and v(N)
 V_0=(1/double(N))*Vtotal_sum;
 v_0=(1/double(N))*vtotal_sum;
