@@ -18,16 +18,16 @@ __host__ __device__ double* three_dim_index(double* matrix, int i, int j, int k,
 __host__ __device__ double* two_dim_index(double* vector, int i, int j, double m, int b);
 
 
-
+//this kernel generates the stochastic mesh.
 __global__ void MeshGenKernel(double* X_device, double* delta_device, double* sigma_device,double* X0_device, int N, double strike, double r, double delta_t, int b, double m, int num_assets, curandState_t* states, double* asset_amount_device){
-
+//thread index
 int idx =blockDim.x*blockIdx.x + threadIdx.x;
 
 if(idx<N){
 int m_int=(int)m;
 double Xi, Z;
 
-
+//we set the values of each mesh node in this loop
 for(int i=0; i<m_int; i++){
         if(i==0){
         
@@ -86,6 +86,8 @@ double* delta_device;
 double* X0_device;
 double* asset_amount_device;
 
+//allocate memory on the device and copy from cpu to device
+
 cudaMalloc((void**) &X_device, X_N*sizeof(double) );
 cudaMemcpy(X_device, X, X_N*sizeof(double), cudaMemcpyHostToDevice);
 
@@ -104,9 +106,11 @@ cudaMemcpy(asset_amount_device, asset_amount_host, asset_amount_N*sizeof(double)
 
 cudaMemcpy(states, States, threads*sizeof(curandState_t*), cudaMemcpyHostToDevice);
 
+//set the number of threads
 dim3 gridDim((int)ceil(N/512.0));
 dim3 blockDim(512.0);
 
+//launch kernel
 MeshGenKernel<<<gridDim, blockDim>>>(X_device, delta_device, sigma_device, X0_device, N, strike, r, delta_t, b,  m, num_assets, states, asset_amount_device);
 
 cudaDeviceSynchronize();
@@ -128,6 +132,7 @@ cudaMemcpy(States, states, sizeof(curandState_t)*threads, cudaMemcpyDeviceToHost
     exit(1);
   }
 
+//free the gpu memory
 
 cudaFree(X_device);
 cudaFree(sigma_device);

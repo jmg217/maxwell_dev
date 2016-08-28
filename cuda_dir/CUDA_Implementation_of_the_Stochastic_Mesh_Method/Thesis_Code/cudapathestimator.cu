@@ -24,6 +24,7 @@ __device__ double GeometricPayOffPutV(double* X, double m, int b, int num_assets
 
 __device__ double density(double Xold, double  Xnew, double sigma, double r, double delta, double delta_t);
 
+//this function calculates the weights at each time step for each sub optimal stopping routine
 __device__ void S_weights(double* S_Weights, double* X_device, double* S_new, int m, int b, double* sigma_device, double* delta_device, double delta_t, int num_assets, double r , int i, double* weight_denominator_device ){
 
 double sum, w_s;
@@ -44,10 +45,10 @@ double sum, w_s;
 
 }
 
-
+//this kernel calculates the low bias price estimate
 __global__ void PathEstimatorKernel(double* X_device, double* weight_denominator_device, double* V_device, double* delta_device, double* sigma_device, double* X0_device, int N, double strike, double r, double delta_t, int b, int m, int num_assets, curandState_t* states, double* results_dev, double* asset_amount_device){
 
-
+//thread number
 int idx =blockDim.x*blockIdx.x + threadIdx.x;
 if(idx<N){
 
@@ -55,6 +56,7 @@ double v_0, S_i, Z, C, H, sum, weight; //, w_s, sum_Z;
 const int S_N= num_assets;
 const int S_W_N= b; 
 
+//dynamic allocation of memory on the device heap memory.
 double* S_new;
 S_new= new double[S_N]; 
 double* S_Weights;
@@ -62,6 +64,7 @@ S_Weights=new double[S_W_N];
 
 int i=0;
 
+//on each thread perform a do-while loop for the simulated basket of stock. the do_while loop exits when the option is exercised.
 do {
 
 	if(i==0){
@@ -125,6 +128,7 @@ delete[] S_Weights;
 
 }
 
+//this function allocates memory on the device for the path estimator.
 double PathEstimator(double strike, double r, double delta_t, int b, double m, double sigma[], double delta[], double X0[], double* X, double* weight_denominator, double* V, double asset_amount[], int num_assets, int Path_estimator_iterations, int iterator, int Final_iteration, curandState_t* States, curandState_t* states, int threads ){
 
 
@@ -206,6 +210,7 @@ cudaMemcpy(asset_amount_device, asset_amount_host, asset_amount_N*sizeof(double)
 
 cudaMemcpy(states, States, threads*sizeof(curandState_t*), cudaMemcpyHostToDevice);
 
+// set the number of threads
 dim3 gridDim((int)ceil(N/512.0));
 dim3 blockDim(512.0);
 

@@ -28,36 +28,36 @@ int idx =blockDim.x*blockIdx.x + threadIdx.x;
 
 if(idx<b){
 
-//Mesh Estimator loop
-
-	
-		if(ker==0){
+	if(ker==0){
 			
 		H=GeometricPayOffCallM( X_device, m-1-ker, idx, m, b, num_assets, strike)*exp(-r*delta_t*(m-ker));
 	
 		*two_dim_index(V_device, ker, idx, m, b)=H;
-		}
+	}
 	
-		else{
-
+	else{
+		
+		//the inner control function calculate the continuation value using a control variate
 		C=inner_control_meshME(ker, idx, b, r, delta_t, m, W_device, X_device, V_device, num_assets);
 
 
 		H=GeometricPayOffCallM( X_device, m-1-ker, idx, m, b, num_assets, strike)*exp(-r*delta_t*(m-ker));	
 		
-			if(H>=C){
-				*two_dim_index(V_device, ker, idx, m, b)=H;
+		if(H>=C){
+			*two_dim_index(V_device, ker, idx, m, b)=H;
 			
-			}
-
-			else{
-				*two_dim_index(V_device, ker, idx, m, b)=C;
-			}	
 		}
+
+		else{
+			*two_dim_index(V_device, ker, idx, m, b)=C;
+		}	
+	}
 	
 }
+//end of if statement
 }
 
+//this function allocates the gpu memory copies data to the gpu
 double MeshEstimator(double strike, double r, double delta_t, int b, double m, double* X, double* W, double* V, double asset_amount[], int num_assets ){
 
 double V_0;
@@ -90,7 +90,7 @@ cudaMemcpy(V_device, V, V_N*sizeof(double), cudaMemcpyHostToDevice);
 cudaMalloc((void**) &W_device, W_N*sizeof(double) );
 cudaMemcpy(W_device, W, W_N*sizeof(double), cudaMemcpyHostToDevice);
 
-
+//set the number of threads
 dim3 gridDim((int)ceil(b/512.0));
 dim3 blockDim(512.0);
 
@@ -104,7 +104,7 @@ cudaError_t error = cudaGetLastError();
     exit(1);
   }
 
-
+//we loop of the high bias kernel for each time step
 for(int ker=0; ker<m; ker++){
 MeshEstimatorKernel<<<gridDim, blockDim>>>(strike, r, delta_t, b, m,  X_device,  W_device, V_device, asset_amount_device, num_assets, ker);
 
@@ -137,6 +137,7 @@ double sum=0;
 for(int k=0; k<b; k++){
 sum+=*two_dim_index(V, (m_int-1), k, m, b);
 }
+
 //this is the high bias option value at time 0
 V_0=(1/((double)b))*sum;
 
