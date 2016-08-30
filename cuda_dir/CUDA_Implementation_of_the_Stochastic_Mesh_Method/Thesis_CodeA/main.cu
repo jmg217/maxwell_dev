@@ -130,22 +130,22 @@ if(X0V.size() != num_assets || sigmaV.size() != num_assets || deltaV.size() !=nu
 std::cout<<"The parameters of this simulation are:"<<std::endl;
        //Print these values to screen 
 for(integer=0; integer<X0V.size(); integer++){
-std::cout<<"Starting Price="<<X0V[integer]<<std::endl;
+std::cout<<"Starting Price of Asset "<<integer<<" = "<<X0V[integer]<<std::endl;
 }
 
-std::cout<<"Time to expiry="<<T<<"\n"<<"Number of time steps="<<m<<"\n"<<"interest rate="<<r<<std::endl;
+std::cout<<"Time to Expiry="<<T<<"\n"<<"Number of Time Steps="<<m<<"\n"<<"Interest Rate="<<r<<std::endl;
 
 for(integer=0; integer<sigmaV.size(); integer++){
-    std::cout<<"volatility="<<sigmaV[integer]<<std::endl;
+    std::cout<<"Volatility of Asset "<<integer<<" = "<<sigmaV[integer]<<std::endl;
 }
 
 for(integer=0; integer<deltaV.size(); integer++){
-    std::cout<<"dividend yield="<<deltaV[integer]<<std::endl;
+    std::cout<<"Dividend Yield of Asset "<<integer<<" ="<<deltaV[integer]<<std::endl;
 }
-std::cout<<"number of iterations over path estimator="<<Path_estimator_iterations<<"\n"<<"strike  price="<<strike<<"\n"<<"number of nodes per time step="<<b<<"\n"<<"number mesh generations="<<N<<"\n"<<"Number of Assets="<<num_assets<<std::endl; 
+std::cout<<"Number of Iterations Over the Path Estimator="<<Path_estimator_iterations<<"\n"<<"Strike Price="<<strike<<"\n"<<"Nodes per Time Step="<<b<<"\n"<<"Number Mesh Replications="<<N<<"\n"<<"Number of Assets="<<num_assets<<std::endl; 
 
 for(integer=0; integer<asset_amountV.size(); integer++){
-    std::cout<<"asset amount="<<asset_amountV[integer]<<std::endl;
+    std::cout<<"Amount of Asset "<<integer<<" = "<<asset_amountV[integer]<<std::endl;
 }
 
 // CONVERT TO ARRAYS
@@ -290,8 +290,8 @@ double standardErrorv=std_div_v*(1/sqrt(double(N)));
 Verror=quantile*standardErrorV;
 verror=quantile*standardErrorv;
 
-std::cout<<"V(N)_0="<<V_0<<"\t"<<"V error="<<Verror<<std::endl;
-std::cout<<"v(N)_0="<<v_0<<"\t"<<"v error="<<verror<<std::endl;
+std::cout<<"V(N)_0="<<V_0<<std::endl;
+std::cout<<"v(N)_0="<<v_0<<std::endl;
 
 double pointEst=(V_0+v_0)/2;
 double EstimatedError=((Verror+V_0)-(v_0-verror))/(2*pointEst);
