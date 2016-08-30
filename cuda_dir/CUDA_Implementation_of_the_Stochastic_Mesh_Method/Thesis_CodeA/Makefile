@@ -1,7 +1,7 @@
 all: executable
 
-executable: convert_to_array.o cuda_meshestimatortwo.o main.o cudapathestimator.o index.o cuda_meshweights.o plot_high_bias.o cuda_mesh_generation.o 
-	nvcc convert_to_array.o cuda_meshestimatortwo.o main.o cudapathestimator.o index.o cuda_meshweights.o plot_high_bias.o cuda_mesh_generation.o -arch=sm_35 -o executable 
+executable: convert_to_array.o cuda_mesh_estimator.o main.o cuda_path_estimator.o index.o cuda_mesh_weights.o plot_one_dim_results.o cuda_mesh_generation.o 
+	nvcc convert_to_array.o cuda_mesh_estimator.o main.o cuda_path_estimator.o index.o cuda_mesh_weights.o plot_one_dim_results.o cuda_mesh_generation.o -arch=sm_35 -o executable 
 
 
 main.o: main.cu
@@ -13,21 +13,22 @@ cuda_mesh_generation.o: cuda_mesh_generation.cu
 convert_to_array.o: convert_to_array.cpp
 	g++ -c convert_to_array.cpp
 
-cuda_meshestimatortwo.o: cuda_meshestimatortwo.cu
-	nvcc -c cuda_meshestimatortwo.cu -arch=sm_35 
+cuda_mesh_estimator.o: cuda_mesh_estimator.cu
+	nvcc -c cuda_mesh_estimator.cu -arch=sm_35 
 
-cudapathestimator.o: cudapathestimator.cu
-	nvcc -c cudapathestimator.cu -arch=sm_35
+cuda_path_estimator.o: cuda_path_estimator.cu
+	nvcc -c cuda_path_estimator.cu -arch=sm_35
 
 index.o: index.cpp
 	g++ -c index.cpp 
 
-plot_high_bias.o: plot_high_bias.cpp
-	g++ -c plot_high_bias.cpp
+plot_one_dim_results.o: plot_one_dim_results.cpp
+	g++ -c plot_one_dim_results.cpp
 
-cuda_meshweights.o: cuda_meshweights.cu
-	nvcc -c cuda_meshweights.cu -arch=sm_35
+cuda_mesh_weights.o: cuda_mesh_weights.cu
+	nvcc -c cuda_mesh_weights.cu -arch=sm_35
 
 clean:
 	rm -rf *o mesh
+
 

@@ -171,29 +171,32 @@ std::vector< double > assets;
 std:: vector<double> dim1temp;
 
 std::vector<double> sortvector;
-//std::cout<<"Before loop"<<std::endl;
 
 
-// ARRAY CODE
+
+
 int m_int= (int)m;
-
+//mesh matrix
 double* X;
 int X_dim = (m_int) * b * (num_assets);
 X= new double[X_dim];
 
+//weight matrix
 double* W;
 int W_dim = (m_int) * b * b;
 W= new double[W_dim];
 
+//high values matrix
 double* V;
 int V_dim = (m_int) * b;
 V = new double[V_dim];
 
- 
+//weight denominator values 
 double* weight_denominator;
 int denom_dim = (m_int-1) * b;
 weight_denominator =new double[denom_dim];
 
+//convert to log prices
 for(int init=0; init<num_assets; init++){
 	X0[init]=log(X0[init]);
 }	

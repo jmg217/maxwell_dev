@@ -76,7 +76,7 @@ if(idx<N){
 }
 
 
-//This function allocates memory on the device and copies data over. 
+//This function allocates memory on the device and copies data over. It then initialises the kernel.
 void mesh_generation(int b, int num_assets, double m, double X0[], double sigma[], double delta[], double asset_amount[], double* X, double strike, double r, double delta_t, curandState_t* States, curandState_t* states, int threads){
 
 int m_int=(int)m;
